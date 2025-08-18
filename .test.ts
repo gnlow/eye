@@ -20,27 +20,25 @@ async (input: TemplateStringsArray) => {
     )
 }
 
-Deno.test("socrates", async () => {
-    await helper`
-        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-        @prefix : <http://example.org/socrates#>.
+Deno.test("socrates", () => helper`
+    @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+    @prefix : <http://example.org/socrates#>.
 
-        :Socrates a :Human.
-        :Human rdfs:subClassOf :Mortal.
+    :Socrates a :Human.
+    :Human rdfs:subClassOf :Mortal.
 
-        {?A rdfs:subClassOf ?B. ?S a ?A} => {?S a ?B}.
+    {?A rdfs:subClassOf ?B. ?S a ?A} => {?S a ?B}.
 
-        ##
+    ##
 
-        @prefix : <http://example.org/socrates#>.
+    @prefix : <http://example.org/socrates#>.
 
-        {:Socrates a ?WHAT} => {:Socrates a ?WHAT}.
+    {:Socrates a ?WHAT} => {:Socrates a ?WHAT}.
 
-        ##
+    ##
 
-        @prefix : <http://example.org/socrates#>.
+    @prefix : <http://example.org/socrates#>.
 
-        :Socrates a :Human.
-        :Socrates a :Mortal.
-    `
-})
+    :Socrates a :Human.
+    :Socrates a :Mortal.
+`)
