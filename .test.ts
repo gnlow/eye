@@ -87,3 +87,32 @@ Deno.test("owl - SymmetricProperty", async () => helper(`
     :bob :isFriendOf :alice.
 
 `))
+
+Deno.test("owl - disjoint", async () => helper(`
+    ${await Deno.readTextFile("lib-owl-e.n3")}
+
+    @prefix : <http://example.org/>.
+
+    {
+        ?A owl:disjointWith ?B.
+        ?A owl:disjointWith ?C.
+    } => {
+        ?B owl:equivalentClass ?C.
+    }.
+
+    :Person owl:disjointUnionOf ( :Man :Woman ).
+
+    :NotMan owl:complementOf :Man.
+
+    :alice a :Person, :NotMan.
+
+    ## @prefix : <http://example.org/>.
+
+    { ?a a :Woman } => { ?a a :Woman }.
+
+    ##
+
+    @prefix : <http://example.org/>.
+
+    :alice a :Woman.
+`))
