@@ -1,4 +1,4 @@
-import { assertEquals } from "https://esm.sh/jsr/@std/assert@1.0.14"
+import { assertEquals, assertIsError } from "https://esm.sh/jsr/@std/assert@1.0.14"
 
 // @ts-types="https://esm.sh/eyereasoner@18.19.10/dist/index.d.ts"
 import { n3reasoner } from "https://esm.sh/eyereasoner@18.19.10"
@@ -11,16 +11,16 @@ const trim =
     .join("\n")
 
 const helper =
-async (input: TemplateStringsArray) => {
-    const [data, ...queries] = input[0].split("##")
+async (input: string, f = assertEquals) => {
+    const [data, ...queries] = input.split("##")
     const res = await n3reasoner(data, ...queries.slice(0, -1))
-    assertEquals(
+    f(
         trim(res),
         trim(queries.slice(-1)[0]),
     )
 }
 
-Deno.test("socrates", () => helper`
+Deno.test("socrates", () => helper(`
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
     @prefix : <http://example.org/socrates#>.
 
@@ -41,4 +41,26 @@ Deno.test("socrates", () => helper`
 
     :Socrates a :Human.
     :Socrates a :Mortal.
-`)
+`))
+
+Deno.test("owl", async () => helper(`
+    ${await Deno.readTextFile("lib-owl-rl.n3")}
+
+    ##
+
+    @prefix : <http://example.org/>.
+    @prefix owl: <http://www.w3.org/2002/07/owl#>.
+
+    :Mary a :Woman.
+    :John a :Man.
+
+    :Man owl:disjointWith :Woman.
+
+    :John a :Man, :Woman.
+
+    ##
+    
+`, () => {})
+    .then(() => { throw new Error("not fused") })
+    .catch(x => assertIsError(x))
+)
