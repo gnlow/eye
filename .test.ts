@@ -1,0 +1,46 @@
+import { assertEquals } from "https://esm.sh/jsr/@std/assert@1.0.14"
+
+// @ts-types="https://esm.sh/eyereasoner@18.19.10/dist/index.d.ts"
+import { n3reasoner } from "https://esm.sh/eyereasoner@18.19.10"
+
+const trim =
+(str: string) => str
+    .trim()
+    .split("\n")
+    .map(line => line.trim())
+    .join("\n")
+
+const helper =
+async (input: TemplateStringsArray) => {
+    const [data, ...queries] = input[0].split("##")
+    const res = await n3reasoner(data, ...queries.slice(0, -1))
+    assertEquals(
+        trim(res),
+        trim(queries.slice(-1)[0]),
+    )
+}
+
+Deno.test("socrates", async () => {
+    await helper`
+        @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+        @prefix : <http://example.org/socrates#>.
+
+        :Socrates a :Human.
+        :Human rdfs:subClassOf :Mortal.
+
+        {?A rdfs:subClassOf ?B. ?S a ?A} => {?S a ?B}.
+
+        ##
+
+        @prefix : <http://example.org/socrates#>.
+
+        {:Socrates a ?WHAT} => {:Socrates a ?WHAT}.
+
+        ##
+
+        @prefix : <http://example.org/socrates#>.
+
+        :Socrates a :Human.
+        :Socrates a :Mortal.
+    `
+})
