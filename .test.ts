@@ -43,7 +43,7 @@ Deno.test("socrates", () => helper(`
     :Socrates a :Mortal.
 `))
 
-Deno.test("owl", async () => helper(`
+Deno.test("owl - fuse", async () => helper(`
     ${await Deno.readTextFile("lib-owl-rl.n3")}
 
     ##
@@ -64,3 +64,26 @@ Deno.test("owl", async () => helper(`
     .then(() => { throw new Error("not fused") })
     .catch(x => assertIsError(x))
 )
+
+Deno.test("owl - SymmetricProperty", async () => helper(`
+    ${await Deno.readTextFile("lib-owl-rl.n3")}
+
+    ##
+
+    @prefix : <http://example.org/>.
+    @prefix owl: <http://www.w3.org/2002/07/owl#>.
+
+    :isFriendOf a owl:SymmetricProperty.
+
+    :alice :isFriendOf :bob.
+
+    { ?a :isFriendOf ?b } => { ?a :isFriendOf ?b }.
+
+    ##
+
+    @prefix : <http://example.org/>.
+
+    :alice :isFriendOf :bob.
+    :bob :isFriendOf :alice.
+
+`))
