@@ -92,10 +92,23 @@ Deno.test("owl - disjoint", async () => helper(`
     ${await Deno.readTextFile("lib-owl-e.n3")}
         @prefix : <http://example.org/>.
 
+        {
+            ?p a ?c.
+            ?c owl:unionOf (?c2 ?c3).
+            { ?p a ?c2 } => false.
+        } => {
+            ?p a ?c3.
+        }.
+
+        {
+            ?c1 owl:complementOf ?c2.
+            ?p a ?c1.
+        } => {
+            { ?p a ?c2 } => false.
+        }.
+
         :Person owl:disjointUnionOf ( :Man :Woman ).
-
         :NotMan owl:complementOf :Man.
-
         :alice a :Person, :NotMan.
 
     ##  @prefix : <http://example.org/>.
