@@ -101,10 +101,15 @@ Deno.test("owl - disjoint", async () => helper(`
         }.
 
         {
-            ?c1 owl:disjointWith ?c2.
-            ?p a ?c1.
+            {
+                ?p ?q ?r.
+                ?a ?b ?c.
+                ?d ?e ?f.
+            } => false.
+            ?p ?q ?r.
+            ?a ?b ?c.
         } => {
-            { ?p a ?c2 } => false.
+            { ?d ?e ?f } => false.
         }.
 
         :Person owl:disjointUnionOf ( :Man :Woman ).
