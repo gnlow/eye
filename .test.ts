@@ -101,7 +101,7 @@ Deno.test("owl - disjoint", async () => helper(`
         }.
 
         {
-            ?c1 owl:complementOf ?c2.
+            ?c1 owl:disjointWith ?c2.
             ?p a ?c1.
         } => {
             { ?p a ?c2 } => false.
