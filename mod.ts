@@ -1,5 +1,4 @@
-// @ts-types="https://esm.sh/eyereasoner@18.19.10/dist/index.d.ts"
-import { n3reasoner } from "https://esm.sh/eyereasoner@18.19.10"
+import { n3reasoner } from "./src/deps.ts"
 
 const res = await n3reasoner(
     `
